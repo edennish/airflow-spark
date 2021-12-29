@@ -30,6 +30,7 @@ services:
             - ../dags:/usr/local/airflow/dags #DAG folder
             - ../spark/app:/usr/local/spark/app #Spark Scripts (Must be the same path in airflow and Spark Cluster)
             - ../spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
+            #- ../app:/opt/bitnami/spark/ivy:z
         ports:
             - "8282:8282"
         command: webserver
@@ -56,6 +57,7 @@ services:
         volumes:
             - ../spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
             - ../spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
+            #- ../app:/opt/bitnami/spark/ivy:z
         ports:
             - "8181:8080"
             - "7077:7077"
@@ -78,6 +80,7 @@ services:
         volumes:
             - ../spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
             - ../spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
+            #- ../app:/opt/bitnami/spark/ivy:z
 
     spark-worker-2:
         image: bitnami/spark:3.1.2
@@ -97,6 +100,7 @@ services:
         volumes:
             - ../spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
             - ../spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
+            #- ../app:/opt/bitnami/spark/ivy:z
 
     spark-worker-3:
         image: bitnami/spark:3.1.2
@@ -116,6 +120,7 @@ services:
         volumes:
             - ../spark/app:/usr/local/spark/app # Spark scripts folder (Must be the same path in airflow and Spark Cluster)
             - ../spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
+            #- ../app:/opt/bitnami/spark/ivy:z
 
     #Jupyter notebook
     jupyter-spark:
@@ -129,6 +134,8 @@ services:
           - ../notebooks:/home/jovyan/work/notebooks/
           - ../spark/resources/data:/home/jovyan/work/data/
           - ../spark/resources/jars:/home/jovyan/work/jars/
+          - ../spark/resources:/usr/local/spark/resources #Resources folder (Must be the same path in airflow and Spark Cluster)
+          #- ../app:/opt/bitnami/spark/ivy:z
         environment:
           - JUPYTER_ENABLE_LAB=yes
           #- PYSPARK_SUBMIT_ARGS=--packages com.amazonaws:aws-java-sdk-bundle:1.11.315,org.apache.hadoop:hadoop-aws:3.2.0 pyspark-shell
