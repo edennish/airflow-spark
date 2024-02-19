@@ -7,3 +7,4 @@ part-*
 *.pyc
 dags/__pycache__/spark-test.cpython-36.pyc
 minio/data
+notebooks/*

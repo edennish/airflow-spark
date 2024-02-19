@@ -30,6 +30,10 @@ ENV LC_MESSAGES en_US.UTF-8
 
 COPY requirements.txt /requirements.txt
 
+RUN echo 'deb [arch=amd64] http://archive.debian.org/debian-archive/debian/ stretch main contrib non-free' > /etc/apt/sources.list
+
+RUN apt-get update && apt-get upgrade
+
 RUN set -ex \
     && buildDeps=' \
         freetds-dev \
@@ -39,22 +43,24 @@ RUN set -ex \
         libffi-dev \
         libpq-dev \
         git \
+        bash \
     ' \
     && apt-get update -yqq \
-    && apt-get upgrade -yqq \
-    && apt-get install -yqq --no-install-recommends \
+    && apt-get upgrade -yqq 
+
+RUN apt-get install -yqq --no-install-recommends \
         $buildDeps \
         freetds-bin \
         build-essential \
         default-libmysqlclient-dev \
-        apt-utils \
         curl \
         rsync \
         netcat \
         locales \
         iputils-ping \
-        telnet \
-    && sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
+        telnet
+
+RUN sed -i 's/^# en_US.UTF-8 UTF-8$/en_US.UTF-8 UTF-8/g' /etc/locale.gen \
     && locale-gen \
     && update-locale LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 \
     && useradd -ms /bin/bash -d ${AIRFLOW_HOME} airflow \
@@ -85,12 +91,13 @@ RUN set -ex \
 ###############################
 # Java is required in order to spark-submit work
 # Install OpenJDK-8
-RUN apt-get update && \
-    apt-get install -y software-properties-common && \
+
+#apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EB9B1D8886F44E2A && \
+RUN echo 'deb [arch=amd64] http://archive.debian.org/debian-security stretch/updates main' >> /etc/apt/sources.list
+RUN apt-get update -y && apt-get upgrade -y
+
+RUN apt-get install -y software-properties-common && \
     apt-get install -y gnupg2 && \
-    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys EB9B1D8886F44E2A && \
-    add-apt-repository "deb http://security.debian.org/debian-security stretch/updates main" && \ 
-    apt-get update && \
     apt-get install -y openjdk-8-jdk && \
     pip freeze && \
     java -version $$ \
